@@ -1,4 +1,4 @@
-intel_syntax noprefix
+.intel_syntax noprefix
 .globl _start
 
 .section .text
@@ -282,8 +282,8 @@ _start:
 .section .data
 sockaddrin:
     .short 2
-    .short 0x5000
-    .byte 0, 0, 0, 0
+    .short 0xB90B # PORT: This is 3001 in hex but **BIG ENDIAN**
+    .byte 0, 0, 0, 0 # localhost
 
 status_line:
     # status line

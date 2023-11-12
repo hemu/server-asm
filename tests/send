@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# USAGE: Specify a file that contains either:
+# 1.) GET request accessing a file path
+# 2.) POST request accessing a file path with contents that should be written
+#
+# EXAMPLES:
+# ./send test_get_request.txt
+# ./send test_post_request.txt
+
+cat $1 | nc localhost 3001

@@ -1,0 +1,1 @@
+GET /tmp/jello.txt HTTP/1.1\r\nHost: localhost\r\nUser-Agent: python-requests/2.31.0\r\nAccept-Encoding: gzip, deflate, zstd\r\nAccept: */*\r\nConnection: keep-alive\r\n\r\n
