@@ -9,6 +9,7 @@ intel_syntax noprefix
 
 #STDOUT equ 1
 
+# Search header and parse content length
 fn_find_content_length:
     mov rax, 0 # i
     mov r13, OFFSET request # haystack
@@ -36,7 +37,6 @@ fn_find_content_length:
         cmp rax, 20 # check max iterations as safety bounds
         je done
         inc r13
-
         jmp reset_needle
 
     done:
@@ -121,7 +121,6 @@ fn_find_request_type:
         ret
 
 
-
 # accept()
 # block until we receive an incoming connection on socket
 accept_connection:
@@ -150,16 +149,15 @@ accept_connection:
     syscall
     jmp accept_connection
 
+
 handle_request:
     # read()
-
     # read http request from socket
     mov rax, 0
     mov rdi, r12
     mov rsi, OFFSET request
     mov rdx, 512
     syscall
-
 
     # parse request
     mov r13, OFFSET request
@@ -181,17 +179,15 @@ iterate_find_space:
     mov BYTE PTR [r15], al # copy file path to memory as we go
     inc r15
     inc r14
-
     jmp iterate_find_space
-
 # add null byte to terminate file path string
 terminate_file_path:
     mov DWORD PTR [r15], 0
-
     call fn_find_request_type
     cmp rax, 1
     je handle_POST_request
 
+# Assuming GET request since no jump -- fall through to handling GET request
 handle_GET_REQUEST:
     # open file specified in file path
     mov rax, 2
@@ -216,7 +212,6 @@ handle_GET_REQUEST:
     # write response
     call fn_write_response_status_line 
 
-
     mov rax, 1
     mov rdi, r12
     mov rsi, OFFSET file
@@ -226,7 +221,6 @@ handle_GET_REQUEST:
     jmp exit
 
 
-
 handle_POST_request:
     call fn_find_content_length
     call fn_parse_integer
@@ -234,14 +228,10 @@ handle_POST_request:
     mov r14, rdx # pointer to after content length
     
     # open file specified in file path
-
     mov rax, 2
     mov rdi, OFFSET file_path
-
     mov rsi, 65 # O_WRONLY | O_CREAT
-
     mov rdx, 511 # mode 0777
-
     syscall
 
     mov rcx, rax
@@ -255,10 +245,8 @@ handle_POST_request:
 
     call fn_write_response_status_line
     jmp exit
-
 exit:
     mov rax, 0x3C
-
     mov rdi, 0
     syscall
 
@@ -267,7 +255,6 @@ _start:
     # socket()
     # create a socket
     mov rax, 41
-
     mov rdi, 2
     mov rsi, 1
     mov rdx, 0
@@ -276,7 +263,6 @@ _start:
     # bind()
     # try to claim port with socket
     mov rbx, rax
-
     mov rdi, rbx
     mov rax, 49
     mov rsi, OFFSET sockaddrin
